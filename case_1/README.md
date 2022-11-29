@@ -1,0 +1,1 @@
+# To run test type: python -m doctest morse.py > case_1/result.txt
