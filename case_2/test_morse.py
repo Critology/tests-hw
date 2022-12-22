@@ -13,4 +13,3 @@ def test_decode(string, result):
     assert decode(string) == result
 
 
-"""python -m pytest -v > case_2/result.txt"""

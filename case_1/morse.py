@@ -58,4 +58,3 @@ if __name__ == '__main__':
     decoded_msg = decode(morse_msg)
     print(decoded_msg)
     print(encode(decoded_msg))
-    '''python -m doctest -v morse.py > result.txt'''

@@ -1,12 +1,55 @@
-from unittest.mock import patch
-from whats_year_now import what_is_year_now
+import whats_year_now
+import pytest
+from unittest.mock import MagicMock, patch
 
 
-@patch
-def test_what_is_year_now():
-    with patch("whats_year_now.urllib.request.urlopen") as mock_urlopen:
-        mock_urlopen.__enter__.loads.__enter__.decode.return_value = '["myjsondata"]'
-        assert what_is_year_now() == "2012-03-05"
+@patch('urllib.request.urlopen')
+def test_format_one(urlopen):
+    mock = MagicMock()
+    mock.read.return_value = '{"$id":"1",' \
+                             '"currentDateTime":"2022-10-10T11:21Z",' \
+                             '"utcOffset":"00:00:00",' \
+                             '"isDayLightSavingsTime":false,' \
+                             '"dayOfTheWeek":"Monday",' \
+                             '"timeZoneName":"UTC",' \
+                             '"currentFileTime":133098749833987610,' \
+                             '"ordinalDate":"2022-283",' \
+                             '"serviceResponse":null}'
+    mock.__enter__.return_value = mock
+    urlopen.return_value = mock
+    assert whats_year_now.what_is_year_now() == 2022
 
 
-"2012-03-05"
+@patch('urllib.request.urlopen')
+def test_format_two(urlopen):
+    mock = MagicMock()
+    mock.read.return_value = '{"$id":"1",' \
+                             '"currentDateTime":"10.10.2022T11:21Z",' \
+                             '"utcOffset":"00:00:00",' \
+                             '"isDayLightSavingsTime":false,' \
+                             '"dayOfTheWeek":"Monday",' \
+                             '"timeZoneName":"UTC",' \
+                             '"currentFileTime":133098749833987610,' \
+                             '"ordinalDate":"2022-283",' \
+                             '"serviceResponse":null}'
+    mock.__enter__.return_value = mock
+    urlopen.return_value = mock
+    assert whats_year_now.what_is_year_now() == 2022
+
+
+@patch('urllib.request.urlopen')
+def test_exception(urlopen):
+    mock = MagicMock()
+    mock.read.return_value = '{"$id":"1",' \
+                             '"currentDateTime":"10102022T11:21Z",' \
+                             '"utcOffset":"00:00:00",' \
+                             '"isDayLightSavingsTime":false,' \
+                             '"dayOfTheWeek":"Monday",' \
+                             '"timeZoneName":"UTC",' \
+                             '"currentFileTime":133098749833987610,' \
+                             '"ordinalDate":"2022-283",' \
+                             '"serviceResponse":null}'
+    mock.__enter__.return_value = mock
+    urlopen.return_value = mock
+    with pytest.raises(ValueError):
+        whats_year_now.what_is_year_now()
